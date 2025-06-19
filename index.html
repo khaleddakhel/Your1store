@@ -17,6 +17,7 @@
     .quantity-control button { width: 40px; height: 40px; font-size: 18px; border-radius: 6px; border: none; background-color: #ddd; cursor: pointer; }
     .confirm-btn { background-color: dodgerblue; color: white; padding: 12px; width: 70%; border: none; border-radius: 15px; font-size: 16px; cursor: pointer; margin-bottom: 10px; }
     .summary { background: #f9f9f9; padding: 3px; border-radius: 8px; margin-top: 10px; }
+    #success-message { display: none; background-color: #d4edda; color: #155724; padding: 15px; margin-top: 15px; border-radius: 8px; font-weight: bold; }
   </style>
 </head>
 <body>  
@@ -58,6 +59,7 @@
         <p>💰 الإجمالي: <span id="totalPrice">3200</span> دج</p>
       </div>
     </form>
+    <div id="success-message">✅ تم إرسال الطلب بنجاح! شكرًا لتعاملكم معنا.</div>
   </div>
 </div>
 
@@ -120,6 +122,29 @@
     });
 
     window.updateQuantity = updateQuantity;
+
+    document.getElementById("orderForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const form = e.target;
+      fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      }).then(response => {
+        if (response.ok) {
+          form.reset();
+          document.getElementById("quantity").textContent = "1";
+          document.getElementById("summaryQty").textContent = "1";
+          document.getElementById("shipping").textContent = "0";
+          document.getElementById("totalPrice").textContent = "3200";
+          document.getElementById("success-message").style.display = "block";
+        } else {
+          alert("حدث خطأ أثناء الإرسال. حاول مرة أخرى.");
+        }
+      }).catch(error => {
+        alert("فشل الاتصال بالخادم.");
+      });
+    });
   });
 </script>
 </body>
